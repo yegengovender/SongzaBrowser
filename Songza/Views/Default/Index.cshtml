@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/jquery-1.9.1.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+</head>
+<body ng-app>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-3">
+                <h3>SONGZA BROWSER</h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <h4>GENRES</h4>
+            </div>
+        </div>
+
+
+        <div ng-controller="SongzaController">
+            <div class="popup" id="mymodal" ng-show="showDetails">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <h3>{{stationDetails.name}}</h3>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="close" ng-click="hideDetails()">&times;</button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <img ng-src="{{stationDetails.cover_url}}" />
+                                </div>
+                                <div class="col-md-9">
+                                    <h4>{{stationDetails.song_count}} songs</h4>
+                                    <p>
+                                        {{stationDetails.description}}
+                                    </p>
+                                    <h4>Featured Artists</h4>
+                                    <li ng-repeat="artist in stationDetails.featured_artists">{{artist.name}}
+                                    </li>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div> <!-- /.modal-content -->
+
+                    <div class="modal-content" id="nowPlayingBox">
+                        <div class="modal-body">
+                            <h4>Now Playing</h4>
+
+                            <div class="row">
+
+                                <div class="col-md-4">
+                                    {{stationNext.song.artist.name}}
+                                    <br />
+                                    {{stationNext.song.title}}
+                                <p>
+                                    <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" />
+                                </p>
+                                </div>
+
+                                <div class="col-md-8">
+                                    <p>
+                                        <audio id="player" controls>
+                                            <source ng-src="{{stationNext.listen_url}}" type="audio/mpeg">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                        <p>
+                                            <a class="btn btn-info" ng-click="getStationNext(stationDetails)">next</a>
+                                        </p>
+
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div> <!-- /.modal-content -->
+                </div> <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+
+
+            <div class="col-md-2" id="sidebar">
+
+                <div class="row" id="searchGenres">
+                    <input placeholder="search genres" ng-model="genreSearch" />
+                </div>
+
+                <div class="row" id="genres">
+                    <ul class="nav bs-sidenav">
+                        <li ng-repeat="genre in genres | filter:genreSearch">
+                            <a href="#" ng-click="getPlaylists(genre)">{{genre.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+
+            <div class="col-md-10">
+
+                <div class="row" id="searchStations">
+                    <input placeholder="search stations" ng-model="stationSearch" />
+                </div>
+
+                <div id="stations" class="row">
+                    <div class="col-md-3 stationThumb" ng-repeat="station in stations | filter:stationSearch" ng-click="showStation(station)">
+                        <span>
+                            <img ng-src="{{station.cover_url}}">
+                            <h4>{{station.name}}</h4>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+<script>
+    var startPlayer = function () {
+        setTimeout(function () {
+            $('#player').load();
+        }, 1500);
+    };
+
+    var stopPlayer = function () {
+        $('#player > source').attr("src", "");
+        $('#player').load();
+    };
+
+    $(function () {
+    });
+    function SongzaController($scope, $http) {
+
+
+        $http.get('@Url.Action("Genres")').success(function (data) {
+            $scope.genres = data;
+        });
+
+        $scope.getPlaylists = function (genre) {
+            $http.post('@Url.Action("Stations")', genre.station_ids).success(function (data) {
+                $scope.stations = data;
+            });
+        };
+
+        $scope.getStationNext = function (station) {
+            $http.post('@Url.Action("StationNext")', { stationID: station.id }).success(function (data) {
+                $scope.stationNext = data;
+                startPlayer();
+            });
+        };
+
+        $scope.showStation = function (station) {
+            $http.post('@Url.Action("StationDetails")', { stationID: station.id }).success(function (data) {
+                $scope.stationDetails = data;
+                $scope.showDetails = true;
+                $scope.getStationNext(station);
+            });
+        };
+
+        $scope.hideDetails = function () {
+            $scope.showDetails = false;
+            stopPlayer();
+        }
+
+        $scope.showDetails = false;
+        }
+</script>
+</html>

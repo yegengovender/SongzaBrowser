@@ -1,0 +1,64 @@
+﻿body {
+    background-color: #262626;
+    color: #d7ba7d;
+}
+
+.bs-sidenav > li > a {
+    display: block;
+    color: #716b7a;
+    padding: 5px 20px;
+}
+
+#searchGenres, #searchStations {
+    height: 50px;
+}
+
+#genres, #stations {
+    display: block;
+    overflow-y: scroll;
+    height: 500px;
+}
+
+
+.stationThumb {
+    display: block;
+    height: 200px;
+    max-width: 100%;
+    padding: 10px;
+    background-color: #363636;
+    border: transparent;
+    border-radius: 4px;
+    margin: 10px 0 10px 20px;
+    text-align:center;
+    cursor: pointer;        
+}
+
+    .stationThumb:hover {
+        background-color: #515151;
+    }
+
+.popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    overflow: auto;
+    overflow-y: scroll;
+    color: #262626;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    border-radius: 0;
+}
+
+#nowPlayingBox {
+    background-color: #716b7a;
+}
+
+
+#nowplayingArt {
+    height: 100px;
+}
