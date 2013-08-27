@@ -11,5 +11,7 @@ Called and bound with AngularJS on the front-end.
 Style courtesy of Bootstrap 3
 Audio through HTML5.
 
-Demo: http://songzabrowser.azurewebsites.net/#
+Demo: http://songzabrowser.azurewebsites.net/
+
+
 More to come...
