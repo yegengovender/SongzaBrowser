@@ -4,7 +4,7 @@ SongzaBrowser
 Songza Browser Experiment
 
 An experiment to interact with the Songza API.
-Thanks to ByALongShot's repo: https://github.com/ByALongShot/XBMC-Plugin-Songza#xbmc-plugin-songza
+Thanks to djcode's repo: https://github.com/djcode/XBMC-Songza-Plugin/wiki/Songza-API-notes
 
 Uses MVC JsonResult actions on the back-end.
 Called and bound with AngularJS on the front-end.
