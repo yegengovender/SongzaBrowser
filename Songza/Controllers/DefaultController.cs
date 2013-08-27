@@ -13,8 +13,13 @@ namespace Songza.Controllers
         private const string StationNextUrl = "http://songza.com/api/1/station/{0}/next";
         private const string StationsUrl = "http://songza.com/api/1/station/multi";
         private const string GenresUrl = "http://songza.com/api/1/gallery/tag/genres";
+        private const string MoodsUrl = "http://songza.com/api/1/gallery/tag/moods";
+        private const string DecadesUrl = "http://songza.com/api/1/gallery/tag/decades";
+        private const string CultureUrl = "http://songza.com/api/1/gallery/tag/culture";
+        private const string CategoryUrl = "http://songza.com/api/1/gallery/tag/{0}";
         
         private readonly WebApiHelper _webApiHelper;
+        private readonly string[] CategoryList = { "genres", "activities", "moods", "decades", "culture", "record_store_clerk" };
 
         public DefaultController(WebApiHelper webApiHelper)
         {
@@ -24,6 +29,20 @@ namespace Songza.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public JsonResult Categories()
+        {
+            return Json(CategoryList, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult CategoryFilter(string category)
+        {
+            var url = string.Format(CategoryUrl, category);
+            var genres = _webApiHelper.GetApiResult(url);
+
+            return Json(genres, JsonRequestBehavior.AllowGet);            
         }
 
         public JsonResult Genres()
