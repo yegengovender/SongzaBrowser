@@ -11,7 +11,7 @@
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/style.css" rel="stylesheet" />
 </head>
-<body ng-app>
+<body ng-app="SongzaApp">
 
     <div class="container">
 
@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        <div ng-controller="SongzaController">
+        <div ng-controller="songzaController">
             <div class="popup" id="mymodal" ng-show="showDetails">
                 <div class="modal-dialog">
 
@@ -151,24 +151,37 @@
 
 </body>
 <script>
-    var startPlayer = function () {
-        setTimeout(function () {
-            $('#player').load();
-        }, 1500);
-    };
-
-    var stopPlayer = function () {
-        $('#player > source').attr("src", "");
-        $('#player').load();
-    };
-
     $(function () {
     });
-    function SongzaController($scope, $http) {
+    
+    var SongzaApp = angular.module('SongzaApp', []);
+    
+    SongzaApp.factory('audio', function ($document, $rootScope) {
+        var audioElement = $document[0].getElementById('player'); // <-- Magic trick here
 
+        audioElement.addEventListener('ended', function () {
+            $rootScope.$broadcast("trackFinished");
+        });
+        
+        return {
+            audioElement: audioElement,
 
+            play: function (filename) {
+                audioElement.src = filename;
+                audioElement.play(); 
+            },
+            
+            pause: function() {
+                audioElement.pause();
+            }
+        };
+    });
+
+    SongzaApp.controller('songzaController', function ($scope, $http, audio) {
         $http.get('@Url.Action("Categories")').success(function (data) {
             $scope.categories = data;
+            $scope.selectedCategory = $scope.categories[0];
+            $scope.getFilter();
         });
 
         $scope.getFilter = function () {
@@ -187,7 +200,7 @@
         $scope.getStationNext = function (station) {
             $http.post('@Url.Action("StationNext")', { stationID: station.id }).success(function (data) {
                 $scope.stationNext = data;
-                startPlayer();
+                audio.play($scope.stationNext.listen_url);
             });
         };
 
@@ -199,12 +212,18 @@
             });
         };
 
+        $scope.$on("trackFinished", function() {
+            $scope.getStationNext($scope.stationDetails);
+        });
+
         $scope.hideDetails = function() {
             $scope.showDetails = false;
-            stopPlayer();
+            audio.pause();
         };
 
         $scope.showDetails = false;
-        }
+    });
+
+
 </script>
 </html>
