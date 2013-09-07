@@ -148,7 +148,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <None Include="Properties\PublishProfiles\songzabrowser - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\songzabrowser - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\songzabrowser - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\songzabrowser - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\angular-bootstrap-prettify.js" />

@@ -10,7 +10,7 @@ namespace Songza.Controllers
         //todo: private string concierge = "http://songza.com/api/1/situation/targeted?site=songza&current_date=1-jan-2013&day=0&period=0&device=iphone";
 
         private const string StationDetailsUrl = "http://songza.com/api/1/station/{0}";
-        private const string StationNextUrl = "http://songza.com/api/1/station/{0}/next";
+        private const string StationNextUrl = "http://songza.com/api/1/station/{0}/next?format=mp3";
         private const string StationsUrl = "http://songza.com/api/1/station/multi";
         private const string GenresUrl = "http://songza.com/api/1/gallery/tag/genres";
         private const string MoodsUrl = "http://songza.com/api/1/gallery/tag/moods";
