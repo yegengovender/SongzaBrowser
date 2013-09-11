@@ -47,6 +47,7 @@
     overflow: auto;
     overflow-y: scroll;
     color: #262626;
+    background-color: #000000;
     background-color: rgba(0,0,0,0.7);
 }
 
@@ -62,10 +63,51 @@
 
 #closeButton {
     float: right;
-    margin: 5px 10px;
-    font-size: 1.5em;
+    margin: 10px;
+    font-size: 2em;
     cursor: pointer;
+    position: relative;
+    z-index: 1;
+
+}
+    #closeButton a {
+        color: #ADADAD;
+    }
+
+    #closeButton a:hover {
+        color: #797979;
+    }
+
+#nowPlayingBox {
+    background-color: #76A386;
+    padding: 15px;
+    text-align: center;
 }
 
-#nowplayingArt {
+.mainMenu a {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: white;
 }
+
+.mainMenu li a:hover {
+    background-color: #bcbcbc;
+    color: #797979;
+}
+
+.mainMenu li.active a {
+    background-color: #eeeeee;
+    color: #797979;
+}
+
+.mainMenu li.active a:hover {
+    background-color: #eeeeee;
+    color: #000000;
+}
+
+@-webkit-keyframes anim1 {
+    0%{-webkit-transform: perspective(200px) rotateX(90deg)}
+    100%{-webkit-transform:  perspective(200px) rotateX(0)}
+}
+
+.animated{ -moz-animation: anim1 500ms; -o-animation: anim1 500ms; -webkit-animation: anim1 500ms; animation: anim1 500ms;}
