@@ -8,8 +8,11 @@
     <script src="~/Scripts/angular.js"></script>
     <script src="~/Scripts/jquery-1.9.1.js"></script>
     <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/fonts.js"></script>
+    <link href="~/Content/animate.css" rel="stylesheet" />
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/style.css" rel="stylesheet" />
+
 </head>
 
 <body ng-app="SongzaApp">
@@ -19,8 +22,8 @@
     <div class="container">
 
         <div class="row">
-            <div class="col-md-3">
-                <h3>SONGZA BROWSER</h3>
+            <div class="col-md-8">
+                <h2 class="logo">SONGZA <span>BROWSER</span> <img src="~/images/logo.png" />   </h2>
             </div>
         </div>
 
@@ -95,7 +98,7 @@
             <div class="row">
                 
                 <ul class="nav nav-pills mainMenu">
-                    <li ng-repeat="category in categories" ng-class="isCategory(category)"><a href="#" ng-click="selectCategory(category)">{{category}}</a></li>
+                    <li ng-repeat="category in categories" ng-class="isCategory(category)"><a href="#" class="navItem" ng-click="selectCategory(category)">{{category}}</a></li>
 
                 </ul>
 
@@ -105,7 +108,7 @@
                 <div class="col-md-2 col-xs-12">
                 </div>
                 <div class="col-md-10 col-xs-12">
-                    <h4>{{genre.name}}</h4>
+                    <h4 class="genreName">{{genre.name}}</h4>
                 </div>
             </div>
 
@@ -117,6 +120,7 @@
                     </div>
 
                     <div class="row" id="genres">
+                        <div class="frameFoot"></div> 
                         <ul class="nav bs-sidenav">
                             <li ng-repeat="genre in genres | filter:genreSearch">
                                 <a href="#" ng-click="getPlaylists(genre)">{{genre.name}}</a>
@@ -134,10 +138,11 @@
                     </div>
 
                     <div id="stations" class="row">
+                        <div class="frameFoot"></div> 
                         <div class="col-md-3 stationThumb" ng-repeat="station in stations | filter:stationSearch" ng-click="showStation(station)">
                             <span>
                                 <img ng-src="{{station.cover_url}}">
-                                <h4>{{station.name}}</h4>
+                                <h4 class="stationName">{{station.name}}</h4>
                             </span>
                         </div>
                     </div>
@@ -152,6 +157,12 @@
 
 </body>
 <script>
+    //animations
+    $('.logo').addClass('animated bounceInUp');
+    $('.modal-dialog').addClass('animated bounceInUp');
+    $('.stationThumb').addClass('animated flipInY');
+    //end
+
     $(function () {
     });
 
