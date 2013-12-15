@@ -14,4 +14,8 @@ Audio through HTML5.
 Demo: http://songzabrowser.azurewebsites.net/
 
 
+Thanks to Manidf for the styling
+
+
+
 More to come...
