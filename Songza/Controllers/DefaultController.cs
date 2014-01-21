@@ -31,6 +31,11 @@ namespace Songza.Controllers
             return View();
         }
 
+        public ActionResult Test()
+        {
+            return View();
+        }
+
         public JsonResult Categories()
         {
             return Json(CategoryList, JsonRequestBehavior.AllowGet);

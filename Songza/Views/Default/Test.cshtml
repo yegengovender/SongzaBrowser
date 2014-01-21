@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" ng-app="SongzaApp" ng-controller="songzaController">
+<head>
+    <meta charset="utf-8" />
+    <meta name="google-site-verification" content="rbDhZy3hGYP0h79Gn02ERCljGrTziMtktp3Tx5oq28g" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.js"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+
+    <style>
+        div.menu {
+            position: relative;
+            transition: top 500ms;
+            overflow: hidden;
+            max-height: 600px;
+        }
+
+            div.current {
+                background-color: blue;
+            }
+
+        a {
+            display: block;
+            font-size: 15px;
+            height: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: grey;
+            transition: font-size 500ms, color 500ms;
+        }
+
+            a.current {
+                font-size: 18px;
+                color: black;
+            }
+    </style>
+</head>
+
+<body ng-keypress="doKeyEvent($event)" ng-keydown="doKeyEvent($event)">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="menu" ng-style="div1Style" ng-class="{current: column=='categories'}">
+                <a href=" #" ng-repeat="category in categories" ng-class="{current: category==selectedCategory}">
+                {{category}}</a>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="menu" ng-style="div2Style" ng-class="{current: column=='collections'}">
+                <a href="#" ng-repeat="collection in collections" ng-class="{current: collection==selectedCollection}">{{collection.name}}</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+
+    var SongzaApp = angular.module('SongzaApp', []);
+
+    SongzaApp.controller('songzaController', function ($scope, $http) {
+
+        $scope.column = "categories";
+
+        $http.get('@Url.Action("Categories")').success(function (data) {
+            setCategoriesList(data);
+        });
+
+
+        var setCategoriesList = function (data) {
+            $scope.categories = data;
+            setSelectedCategory(0);
+        };
+
+        var setSelectedCategory = function (index) {
+            $scope.selectedCategoryIndex = index;
+            $scope.selectedCategory = $scope.categories[$scope.selectedCategoryIndex];
+            $scope.div1Style = { top: ($scope.selectedCategoryIndex * - 20) + 100 + 'px' };
+
+            getCollections($scope.selectedCategory);
+        };
+
+        var getCollections = function (category) {
+            $http.post('@Url.Action("CategoryFilter")', { category: category }).success(function (data) {
+                setCollections(data);
+            });
+        };
+
+        var setCollections = function (data) {
+            $scope.collections = data;
+            setSelectedCollection(0);
+        };
+
+        var setSelectedCollection = function (index) {
+            $scope.selectedCollectionIndex = index;
+            $scope.selectedCollection = $scope.collections[$scope.selectedCollectionIndex];
+            $scope.div2Style = { top: ($scope.selectedCollectionIndex * - 20) + 100 + 'px' };
+        };
+
+
+        $scope.doKeyEvent = function (event) {
+            var keycode = event.keyCode;
+            switch (keycode) {
+                case 38: upArrow(); break;
+                case 40: downArrow(); break;
+                case 37: leftArrow(); break;
+                case 39: rightArrow(); break;
+            }
+            event.preventDefault();
+        };
+
+        var upArrow = function () {
+            decrementFunction[$scope.column]();
+        };
+
+        var downArrow = function () {
+            incrementFunction[$scope.column]();
+        };
+
+        var leftArrow = function () {
+            $scope.column = "categories";
+        };
+
+        var rightArrow = function () {
+            $scope.column = "collections";
+        };
+
+        var decrementCategory = function () {
+            if ($scope.selectedCategoryIndex > 0) {
+                setSelectedCategory($scope.selectedCategoryIndex-1);
+            }
+        };
+
+        var incrementCategory = function () {
+            if ($scope.selectedCategoryIndex < $scope.categories.length) {
+                setSelectedCategory($scope.selectedCategoryIndex+1);
+            }
+        };
+
+        var decrementCollection = function () {
+            if ($scope.selectedCollectionIndex > 0) {
+                setSelectedCollection($scope.selectedCollectionIndex-1);
+            }
+        };
+
+        var incrementCollection = function () {
+            if ($scope.selectedCollectionIndex < $scope.collections.length) {
+                setSelectedCollection($scope.selectedCollectionIndex+1);
+            }
+        };
+
+        var incrementFunction = { categories: incrementCategory, collections: incrementCollection };
+        var decrementFunction = { categories: decrementCategory, collections: decrementCollection };
+    });
+
+
+</script>
