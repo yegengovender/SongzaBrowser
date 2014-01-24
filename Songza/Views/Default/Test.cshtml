@@ -10,8 +10,8 @@
 
     <style>
         body {
-            background-color: #303030;
             color: #f5f5e5;
+            background-color: #808080;
         }
         div.menu {
             position: relative;
@@ -53,10 +53,10 @@
             <h1>Songza Browser</h1>
         </div>
     </div>
-    <div class="row" >
+    <div class="row" style="background-color: #303030;">
         <div class="col-md-2 column" ng-class="{current: column=='categories'}">
             <div class="menu" ng-style="div1Style">
-                <a href=" #" ng-repeat="category in categories" ng-class="{current: category==selectedCategory}">
+                <a href=" #" ng-repeat="category in categories" ng-class="{current: category==selectedCategory}" ng-click="categoryClick(category)">
                     {{category}}
                 </a>
             </div>
@@ -64,13 +64,13 @@
 
         <div class="col-md-2 column" ng-class="{current: column=='collections'}">
             <div class="menu" ng-style="div2Style">
-                <a href="#" ng-repeat="collection in collections" ng-class="{current: collection==selectedCollection}">{{collection.name}}</a>
+                <a href="#" ng-repeat="collection in collections" ng-class="{current: collection==selectedCollection}" ng-click="collectionClick(collection)">{{collection.name}}</a>
             </div>
         </div>
 
         <div class="col-md-2 column" ng-class="{current: column=='stations'}">
             <div class="menu" ng-style="div3Style">
-                <a href="#" ng-repeat="station in stations" ng-class="{current: station==selectedStation}">{{station.name}}</a>
+                <a href="#" ng-repeat="station in stations" ng-class="{current: station==selectedStation}" ng-click="stationClick(station)">{{station.name}}</a>
             </div>
         </div>
 
@@ -89,8 +89,42 @@
             </p>
             <strong ng-show="selectedStation">Featuring</strong>
             <li ng-repeat="artist in selectedStation.featured_artists">{{artist.name}}</li>
+            <p>
+                <a href="#" class="btn-btn-info" ng-click="playStation(selectedStation)" ng-hide="selectedStation == playingStation && isPlaying">Play [spacebar]</a>
+                <a href="#" class="btn-btn-info" ng-click="pause()" ng-show="selectedStation == playingStation && isPlaying">Currently playing [spacebar to pause]</a>
+            </p>
         </div>
 
+    </div>
+
+    <div class="row" ng-show="isPlaying">
+        <div class="col-md-4">
+            <h2>Now Playing</h2>
+            <h4>{{selectedStation.name}}</h4>
+            <h5>{{selectedStation.description}}</h5>
+        </div>
+        <div class="col-md-4">
+
+            <div>
+
+                <h4>{{stationNext.song.artist.name}}</h4>
+                <h3>{{stationNext.song.title}}</h3>
+                <p>
+                    <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" />
+                </p>
+            </div>
+
+            <p>
+                <audio id="player" controls>
+                    <source ng-src="{{stationNext.listen_url}}" type="audio/mp4">
+                    <source ng-src="{{stationNext.listen_url}}" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+            <p>
+                <a class="btn btn-primary" ng-click="getStationNext(stationDetails)"><i class="glyphicon glyphicon-forward"></i></a>
+            </p>
+
+        </div>
     </div>
 </body>
 </html>
@@ -100,7 +134,7 @@
 
     SongzaApp.factory('audio', function ($document, $rootScope) {
         var audioElement = $document[0].getElementById('player'); // <-- Magic trick here
-
+        var _time;
         audioElement.addEventListener('ended', function () {
             $rootScope.$broadcast("trackFinished");
         });
@@ -113,7 +147,13 @@
                 audioElement.play();
             },
 
+            resume: function () {
+                audioElement.currentTime = _time;
+                audioElement.play();
+            },
+
             pause: function () {
+                _time = audioElement.currentTime;
                 audioElement.pause();
             }
         };
@@ -135,10 +175,17 @@
             setSelectedCategory(0);
         };
 
-        var setSelectedCategory = function (index) {
+        $scope.categoryClick = function (category) {
+            selectedColumn = 0;
+            $scope.column = columns[selectedColumn];
+            var index = $scope.categories.indexOf(category);
+            setSelectedCategory(index);
+        };
+
+        setSelectedCategory = function (index) {
             $scope.selectedCategoryIndex = index;
             $scope.selectedCategory = $scope.categories[$scope.selectedCategoryIndex];
-            $scope.div1Style = { top: ($scope.selectedCategoryIndex * - 20) + 100 + 'px' };
+            $scope.div1Style = { top: ($scope.selectedCategoryIndex * - 30) + 100 + 'px' };
 
             getCollections($scope.selectedCategory);
         };
@@ -155,10 +202,17 @@
             setSelectedCollection(0);
         };
 
-        var setSelectedCollection = function (index) {
+        $scope.collectionClick = function (collection) {
+            selectedColumn = 1;
+            $scope.column = columns[selectedColumn];
+            var index = $scope.collections.indexOf(collection)
+            setSelectedCollection(index);
+        };
+
+        setSelectedCollection = function (index) {
             $scope.selectedCollectionIndex = index;
             $scope.selectedCollection = $scope.collections[$scope.selectedCollectionIndex];
-            $scope.div2Style = { top: ($scope.selectedCollectionIndex * -20) + 100 + 'px' };
+            $scope.div2Style = { top: ($scope.selectedCollectionIndex * -30) + 100 + 'px' };
 
             getStations($scope.selectedCollection);
         };
@@ -175,10 +229,17 @@
             setSelectedStation(0);
         };
 
-        var setSelectedStation = function (index) {
+        $scope.stationClick = function (station) {
+            selectedColumn = 2;
+            $scope.column = columns[selectedColumn];
+            var index = $scope.stations.indexOf(station);
+            setSelectedStation(index);
+        };
+
+        setSelectedStation = function (index) {
             $scope.selectedStationIndex = index;
             $scope.selectedStation = $scope.stations[$scope.selectedStationIndex];
-            $scope.div3Style = { top: ($scope.selectedStationIndex * -20) + 100 + 'px' };
+            $scope.div3Style = { top: ($scope.selectedStationIndex * -30) + 100 + 'px' };
         };
 
 
@@ -218,20 +279,52 @@
         };
 
         var spaceBar = function () {
-            // play pause logic
+            var station = $scope.selectedStation;
+            if ($scope.playingStation == station && $scope.isPlaying) {
+                $scope.pause();
+                return;
+            }
+
+            if ($scope.playingStation == station && !$scope.isPlaying) {
+                audio.resume();
+                $scope.isPlaying = true;
+                return;
+            }
+
+            $scope.playStation(station);
+        };
+
+        $scope.playStation = function (station) {
+            if ($scope.playingStation == station) {
+                audio.resume();
+            }
+            else {
+                $http.post('@Url.Action("StationNext")', { stationID: station.id }).success(function (data) {
+                    $scope.stationNext = data;
+                    audio.play($scope.stationNext.listen_url);
+                });
+
+                $scope.playingStation = station;
+            }
+            $scope.isPlaying = true;
+        };
+
+        $scope.pause = function () {
+            audio.pause();
+            $scope.isPlaying = false;
         };
 
 
         // Nav functions
         var decrementCategory = function () {
             if ($scope.selectedCategoryIndex > 0) {
-                setSelectedCategory($scope.selectedCategoryIndex-1);
+                setSelectedCategory($scope.selectedCategoryIndex - 1);
             }
         };
 
         var incrementCategory = function () {
             if ($scope.selectedCategoryIndex < $scope.categories.length-1) {
-                setSelectedCategory($scope.selectedCategoryIndex+1);
+                setSelectedCategory($scope.selectedCategoryIndex + 1);
             }
         };
 
@@ -259,7 +352,7 @@
             }
         };
 
-        var isPlaying = false;
+        $scope.isPlaying = false;
         var stationStarted = false;
 
         var columns = ['categories', 'collections', 'stations'];
