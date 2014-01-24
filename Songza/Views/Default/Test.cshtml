@@ -9,21 +9,30 @@
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
 
     <style>
+        body {
+            background-color: #303030;
+            color: #f5f5e5;
+        }
         div.menu {
             position: relative;
             transition: top 500ms;
+        }
+
+        div.column {
+            height: 450px;
+            width: 350px;
             overflow: hidden;
-            max-height: 600px;
+            text-align: center;
         }
 
             div.current {
-                background-color: blue;
+                background-color: #414141;
             }
 
         a {
             display: block;
-            font-size: 15px;
-            height: 20px;
+            font-size: 10px;
+            height: 30px;
             font-weight: bold;
             text-transform: uppercase;
             text-decoration: none;
@@ -32,26 +41,56 @@
         }
 
             a.current {
-                font-size: 18px;
-                color: black;
+                font-size: 12px;
+                color: #f5f5e5;
             }
     </style>
 </head>
 
 <body ng-keypress="doKeyEvent($event)" ng-keydown="doKeyEvent($event)">
-    <div class="row">
-        <div class="col-md-2">
-            <div class="menu" ng-style="div1Style" ng-class="{current: column=='categories'}">
+    <div class="row" style="text-align: center; background-color: #202020">
+        <div class="col-md-12">
+            <h1>Songza Browser</h1>
+        </div>
+    </div>
+    <div class="row" >
+        <div class="col-md-2 column" ng-class="{current: column=='categories'}">
+            <div class="menu" ng-style="div1Style">
                 <a href=" #" ng-repeat="category in categories" ng-class="{current: category==selectedCategory}">
-                {{category}}</a>
+                    {{category}}
+                </a>
             </div>
         </div>
 
-        <div class="col-md-2">
-            <div class="menu" ng-style="div2Style" ng-class="{current: column=='collections'}">
+        <div class="col-md-2 column" ng-class="{current: column=='collections'}">
+            <div class="menu" ng-style="div2Style">
                 <a href="#" ng-repeat="collection in collections" ng-class="{current: collection==selectedCollection}">{{collection.name}}</a>
             </div>
         </div>
+
+        <div class="col-md-2 column" ng-class="{current: column=='stations'}">
+            <div class="menu" ng-style="div3Style">
+                <a href="#" ng-repeat="station in stations" ng-class="{current: station==selectedStation}">{{station.name}}</a>
+            </div>
+        </div>
+
+
+        <div class="col-md-4 column">
+            <div>
+                <h4 ng-show="selectedStation">{{selectedStation.name}} - {{selectedStation.song_count}} songs</h4>
+            </div>
+
+            <div>
+                <img ng-src="{{selectedStation.cover_url}}" />
+            </div>
+
+            <p>
+                {{selectedStation.description}}
+            </p>
+            <strong ng-show="selectedStation">Featuring</strong>
+            <li ng-repeat="artist in selectedStation.featured_artists">{{artist.name}}</li>
+        </div>
+
     </div>
 </body>
 </html>
@@ -59,10 +98,33 @@
 
     var SongzaApp = angular.module('SongzaApp', []);
 
-    SongzaApp.controller('songzaController', function ($scope, $http) {
+    SongzaApp.factory('audio', function ($document, $rootScope) {
+        var audioElement = $document[0].getElementById('player'); // <-- Magic trick here
+
+        audioElement.addEventListener('ended', function () {
+            $rootScope.$broadcast("trackFinished");
+        });
+
+        return {
+            audioElement: audioElement,
+
+            play: function (filename) {
+                audioElement.src = filename;
+                audioElement.play();
+            },
+
+            pause: function () {
+                audioElement.pause();
+            }
+        };
+    });
+
+
+    SongzaApp.controller('songzaController', function ($scope, $http, audio) {
 
         $scope.column = "categories";
 
+        // Categories
         $http.get('@Url.Action("Categories")').success(function (data) {
             setCategoriesList(data);
         });
@@ -81,6 +143,7 @@
             getCollections($scope.selectedCategory);
         };
 
+        // Collections
         var getCollections = function (category) {
             $http.post('@Url.Action("CategoryFilter")', { category: category }).success(function (data) {
                 setCollections(data);
@@ -95,19 +158,41 @@
         var setSelectedCollection = function (index) {
             $scope.selectedCollectionIndex = index;
             $scope.selectedCollection = $scope.collections[$scope.selectedCollectionIndex];
-            $scope.div2Style = { top: ($scope.selectedCollectionIndex * - 20) + 100 + 'px' };
+            $scope.div2Style = { top: ($scope.selectedCollectionIndex * -20) + 100 + 'px' };
+
+            getStations($scope.selectedCollection);
+        };
+
+        // Stations
+        var getStations = function (collection) {
+            $http.post('@Url.Action("Stations")', collection.station_ids).success(function (data) {
+                setStations(data);
+            });
+        };
+
+        var setStations = function (data) {
+            $scope.stations = data;
+            setSelectedStation(0);
+        };
+
+        var setSelectedStation = function (index) {
+            $scope.selectedStationIndex = index;
+            $scope.selectedStation = $scope.stations[$scope.selectedStationIndex];
+            $scope.div3Style = { top: ($scope.selectedStationIndex * -20) + 100 + 'px' };
         };
 
 
+        // Keyboard UI
         $scope.doKeyEvent = function (event) {
             var keycode = event.keyCode;
             switch (keycode) {
-                case 38: upArrow(); break;
-                case 40: downArrow(); break;
-                case 37: leftArrow(); break;
-                case 39: rightArrow(); break;
+                case 38: upArrow(); event.preventDefault(); break;
+                case 40: downArrow(); event.preventDefault(); break;
+                case 37: leftArrow(); event.preventDefault(); break;
+                case 39: rightArrow(); event.preventDefault(); break;
+                case 32: spaceBar(); event.preventDefault(); break;
             }
-            event.preventDefault();
+            console.debug(keycode);
         };
 
         var upArrow = function () {
@@ -119,13 +204,25 @@
         };
 
         var leftArrow = function () {
-            $scope.column = "categories";
+            if (selectedColumn > 0 ) {
+                selectedColumn--;
+                $scope.column = columns[selectedColumn];
+            }
         };
 
         var rightArrow = function () {
-            $scope.column = "collections";
+            if (selectedColumn < columns.length-1) {
+                selectedColumn++;
+                $scope.column = columns[selectedColumn];
+            }
         };
 
+        var spaceBar = function () {
+            // play pause logic
+        };
+
+
+        // Nav functions
         var decrementCategory = function () {
             if ($scope.selectedCategoryIndex > 0) {
                 setSelectedCategory($scope.selectedCategoryIndex-1);
@@ -133,25 +230,42 @@
         };
 
         var incrementCategory = function () {
-            if ($scope.selectedCategoryIndex < $scope.categories.length) {
+            if ($scope.selectedCategoryIndex < $scope.categories.length-1) {
                 setSelectedCategory($scope.selectedCategoryIndex+1);
             }
         };
 
         var decrementCollection = function () {
             if ($scope.selectedCollectionIndex > 0) {
-                setSelectedCollection($scope.selectedCollectionIndex-1);
+                setSelectedCollection($scope.selectedCollectionIndex - 1);
             }
         };
 
         var incrementCollection = function () {
-            if ($scope.selectedCollectionIndex < $scope.collections.length) {
-                setSelectedCollection($scope.selectedCollectionIndex+1);
+            if ($scope.selectedCollectionIndex < $scope.collections.length-1) {
+                setSelectedCollection($scope.selectedCollectionIndex + 1);
             }
         };
 
-        var incrementFunction = { categories: incrementCategory, collections: incrementCollection };
-        var decrementFunction = { categories: decrementCategory, collections: decrementCollection };
+        var decrementStation = function () {
+            if ($scope.selectedStationIndex > 0) {
+                setSelectedStation($scope.selectedStationIndex - 1);
+            }
+        };
+
+        var incrementStation = function () {
+            if ($scope.selectedStationIndex < $scope.stations.length-1) {
+                setSelectedStation($scope.selectedStationIndex + 1);
+            }
+        };
+
+        var isPlaying = false;
+        var stationStarted = false;
+
+        var columns = ['categories', 'collections', 'stations'];
+        var selectedColumn = 0;
+        var incrementFunction = { categories: incrementCategory, collections: incrementCollection, stations: incrementStation };
+        var decrementFunction = { categories: decrementCategory, collections: decrementCollection, stations: decrementStation };
     });
 
 
