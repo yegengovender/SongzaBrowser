@@ -1,0 +1,215 @@
+﻿.wf-loading * {
+    /*
+    first things first, we need to hide everything,
+    but bear in mind that this will only take effect
+    once the loading script has taken effect.
+    here we're hiding all content within
+    the <html> once it has the class "wf-loading"
+    */
+    opacity: 0;
+}
+
+
+
+body {    
+    color: #444;
+    font-family: 'Roboto', sans-serif;
+    /** To edit this background, follow this link: http://svgeneration.com/generate/Graph-Paper?size=20&background=ffffff&lines=cccccc&line-width=1&turbulence=0.1& */
+    background-color: #ffffff;
+    background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczMDAnIGhlaWdodD0nMzAwJyB2aWV3Qm94PScwIDAgMzAwIDMwMCc+Cgk8ZGVmcz4KCQk8cGF0dGVybiBpZD0nYmx1ZXN0cmlwZScgcGF0dGVyblVuaXRzPSd1c2VyU3BhY2VPblVzZScgeD0nMCcgeT0nMCcgd2lkdGg9JzIwJyBoZWlnaHQ9JzIwJyB2aWV3Qm94PScwIDAgNDAgNDAnID4KCQk8cmVjdCB3aWR0aD0nMTEwJScgaGVpZ2h0PScxMTAlJyBmaWxsPScjZmZmZmZmJy8+CgkJCTxwYXRoIGQ9J00xLDFoNDB2NDBoLTQwdi00MCcgZmlsbC1vcGFjaXR5PScwJyBzdHJva2Utd2lkdGg9JzEnIHN0cm9rZS1kYXNoYXJyYXk9JzAsMSwxJyBzdHJva2U9JyNjY2NjY2MnLz4KCQk8L3BhdHRlcm4+IAoJCTxmaWx0ZXIgaWQ9J2Z1enonIHg9JzAnIHk9JzAnPgoJCQk8ZmVUdXJidWxlbmNlIHR5cGU9J3R1cmJ1bGVuY2UnIHJlc3VsdD0ndCcgYmFzZUZyZXF1ZW5jeT0nLjIgLjMnIG51bU9jdGF2ZXM9JzUnIHN0aXRjaFRpbGVzPSdzdGl0Y2gnLz4KCQkJPGZlQ29sb3JNYXRyaXggdHlwZT0nc2F0dXJhdGUnIGluPSd0JyB2YWx1ZXM9JzAnLz4KCQk8L2ZpbHRlcj4KCTwvZGVmcz4KCTxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9J3VybCgjYmx1ZXN0cmlwZSknLz4KPHJlY3Qgd2lkdGg9JzEwMCUnIGhlaWdodD0nMTAwJScgZmlsdGVyPSd1cmwoI2Z1enopJyBvcGFjaXR5PScwLjEnLz4KPC9zdmc+Cg==');
+}
+
+
+.wf-loading {	
+	background: url('../images/ajax-loader.gif') no-repeat center center;	height: 100%;	overflow: hidden;		
+}
+
+
+.wf-active *, 
+.wf-inactive * {
+	-webkit-transition: opacity 1s ease-out;  -moz-transition: opacity 1s ease-out;	-o-transition: opacity 1s ease-out; transition: opacity 1s ease-out;  
+}
+
+.wf-:after {
+    content: "loading fonts..";
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+
+h1,h2,h3,h4,h5,h6,
+.h1,.h2,.h3,.h4,.h5,.h6 {
+    color: #444;  
+}
+.logo {
+    font-size: 5em; font-weight: 700; padding: 20px 0 20px 0; margin-left:-12px;
+}
+    .logo span {
+        font-weight: 200;
+    }
+    .logo img {
+        display: inline-block; width: 80px; position: relative; top: -6px; left: 10px;
+    }
+
+.genreName {
+    padding:10px 0 10px 0; font-size: 28px; font-weight: 700; font-style: italic;
+}
+.stationName {
+    padding:10px 0 10px 0; font-size: 18px; font-weight: 300;
+}
+.bs-sidenav > li > a {
+    display: block;
+    color: #716b7a;
+    padding: 5px 20px;
+}
+
+#searchGenres, #searchStations {
+    height: 50px;
+}
+#searchGenres input, #searchStations input {
+    padding:4px; border-radius: 4px; -webkit-border-radius: 4px; -o-border-radius: 4px; -mox-border-radius: 4px; -ms-border-radius: 4px;
+    border: 1px solid #CCC; font-size: 12px;
+}
+
+#genres, #stations {
+    display: block;
+    overflow-y: scroll;
+    height: 500px;
+}
+
+
+.stationThumb {
+    display: block;
+    height: 200px;
+    max-width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: transparent;
+    border-radius: 4px;
+    margin: 10px 0 10px 20px;
+    text-align:center;
+    cursor: pointer;  
+    -webkit-transition: all 0.3s ease-out;  -moz-transition: all 0.3s ease-out;    -o-transition: all 0.3s ease-out;  transition: all 0.3s ease-out;      
+}
+
+    .stationThumb:hover {
+        background-color: #35C46E;
+        color: #FFF;
+        -webkit-transition: all 0.3s ease-out;  -moz-transition: all 0.3s ease-out;    -o-transition: all 0.3s ease-out;  transition: all 0.3s ease-out;
+    }
+
+.popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    overflow: auto;
+    overflow-y: scroll;
+    color: #262626;
+    background-color: #000000;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    border-radius: 0;
+}
+    .modal-content h4 {
+        font-size: 30px;
+        color: #FFF;
+        font-weight: 700;
+    
+        padding:  0 0;
+        margin: 0 0;
+}
+    .modal-content h3 {
+        font-size: 21px;
+        color: #FFF;
+        font-weight: 300;
+    
+        padding: 0 0 20px 0;
+        margin: 0 0;
+}
+
+#categoryDescription {
+    background-color: #F5EFFF;
+    color: #A0A0A0;
+    padding: 15px;
+}
+    #categoryDescription h4 {
+        font-size:16px;
+        color: #444;
+        font-weight: 300;
+    }
+    #categoryDescription img {
+        padding:10px;
+    }
+
+#closeButton {
+    float: right;
+    margin: 10px;
+    font-size: 2em;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+
+}
+    #closeButton a {
+        color: #EEE;
+        -webkit-transition: all 0.3s ease-out;  -moz-transition: all 0.3s ease-out; -o-transition: all 0.3s ease-out;  transition: all 0.3s ease-out;
+    }
+
+    #closeButton a:hover {
+        color: #FFF;
+        -webkit-transition: all 0.3s ease-out;  -moz-transition: all 0.3s ease-out; -o-transition: all 0.3s ease-out;  transition: all 0.3s ease-out;
+    }
+
+#nowPlayingBox {
+    background-color: #35C46E;
+    padding: 15px;
+    text-align: center;
+}
+    #nowPlayingBox img {
+        width: 300px;
+    }
+
+.mainMenu a {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: white;
+    background: #444;
+}
+
+.mainMenu li a:hover {
+    background-color: #049C40;
+    color: #FFF;
+}
+
+.mainMenu li.active a {
+    background-color: #35C46E;
+    color: #FFF;
+}
+
+.mainMenu li.active a:hover {
+    background-color: #35C46E;
+    color: #FFF;
+    cursor: default;
+}
+
+.frameFoot {
+    display: block; 
+    position: absolute; bottom:0 ; z-index: 10; width: 100%;
+    height: 16px;
+    background: -moz-linear-gradient(top,  rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,0)), color-stop(100%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+    border-bottom: 1px solid #EEE;
+}

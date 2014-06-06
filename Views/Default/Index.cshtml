@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="google-site-verification" content="rbDhZy3hGYP0h79Gn02ERCljGrTziMtktp3Tx5oq28g" />
+    <title></title>
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/jquery-1.9.1.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/fonts.js"></script>
+    <link href="~/Content/animate.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+
+</head>
+
+<body ng-app="SongzaApp">
+    <a href="https://github.com/yegengovender/SongzaBrowser">
+        <img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_orange_ff7600.png" alt="Fork me on GitHub">
+    </a>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="logo">SONGZA <span>BROWSER</span> <img src="~/images/logo.png" />   </h2>
+            </div>
+        </div>
+
+        <div ng-controller="songzaController">
+            <div class="popup" id="mymodal" ng-show="showDetails">
+                <div class="modal-dialog">
+
+                    <div class="modal-content">
+
+                            <div id="closeButton">
+                                <a ng-click="hideDetails()"><i class="glyphicon glyphicon-remove-circle"></i></a>
+                            </div>
+
+                            <div class="col-md-12" id="nowPlayingBox">
+                                <div>
+
+                                    <h4>{{stationNext.song.artist.name}}</h4>
+                                    <h3>{{stationNext.song.title}}</h3>
+                                    <p>
+                                        <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" />
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p>
+                                        <audio id="player" controls>
+                                            <source ng-src="{{stationNext.listen_url}}" type="audio/mp4">
+                                            <source ng-src="{{stationNext.listen_url}}" type="audio/mp3">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                        <p>
+                                            <a class="btn btn-primary" ng-click="getStationNext(stationDetails)"><i class="glyphicon glyphicon-forward"></i></a>
+                                        </p>
+
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12" id="categoryDescription">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div>
+                                            <h4>{{stationDetails.name}} - {{stationDetails.song_count}} songs</h4>
+                                        </div>
+
+                                        <div>
+                                            <img ng-src="{{stationDetails.cover_url}}" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-7">
+                                        <p>
+                                            {{stationDetails.description}}
+                                        </p>
+                                        <strong>Featuring</strong>
+                                        <li ng-repeat="artist in stationDetails.featured_artists">{{artist.name}}</li>
+
+                                        <p>
+                                            <a class="btn btn-primary" ng-click="playStation(stationDetails)"><i class="glyphicon glyphicon-play"></i></a>
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="row">
+                
+                <ul class="nav nav-pills mainMenu">
+                    <li ng-repeat="category in categories" ng-class="isCategory(category)"><a href="#" class="navItem" ng-click="selectCategory(category)">{{category}}</a></li>
+
+                </ul>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 col-xs-12">
+                </div>
+                <div class="col-md-10 col-xs-12">
+                    <h4 class="genreName">{{genre.name}}</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 col-xs-6" id="sidebar">
+
+                    <div class="row" id="searchGenres">
+                        <input placeholder="search {{selectedCategory}}" ng-model="genreSearch" ng-show="selectedCategory" />
+                    </div>
+
+                    <div class="row" id="genres">
+                        <div class="frameFoot"></div> 
+                        <ul class="nav bs-sidenav">
+                            <li ng-repeat="genre in genres | filter:genreSearch">
+                                <a href="#" ng-click="getPlaylists(genre)">{{genre.name}}</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div class="col-md-10 col-xs-6">
+
+                    <div class="row" id="searchStations">
+
+                        <input placeholder="search stations" ng-model="stationSearch" ng-show="genre" />
+                    </div>
+
+                    <div id="stations" class="row">
+                        <div class="frameFoot"></div> 
+                        <div class="col-md-3 stationThumb" ng-repeat="station in stations | filter:stationSearch" ng-click="showStation(station)">
+                            <span>
+                                <img ng-src="{{station.cover_url}}">
+                                <h4 class="stationName">{{station.name}}</h4>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+</body>
+<script>
+    //animations
+    $('.logo').addClass('animated bounceInUp');
+    $('.modal-dialog').addClass('animated bounceInUp');
+    $('.stationThumb').addClass('animated flipInY');
+    //end
+
+    $(function () {
+    });
+
+    var SongzaApp = angular.module('SongzaApp', []);
+
+    SongzaApp.factory('audio', function ($document, $rootScope) {
+        var audioElement = $document[0].getElementById('player'); // <-- Magic trick here
+
+        audioElement.addEventListener('ended', function () {
+            $rootScope.$broadcast("trackFinished");
+        });
+
+        return {
+            audioElement: audioElement,
+
+            play: function (filename) {
+                audioElement.src = filename;
+                audioElement.play();
+            },
+
+            pause: function () {
+                audioElement.pause();
+            }
+        };
+    });
+
+    SongzaApp.controller('songzaController', function ($scope, $http, audio) {
+        $http.get('@Url.Action("Categories")').success(function (data) {
+            $scope.categories = data;
+            $scope.selectCategory($scope.categories[0]);
+        });
+
+        $scope.selectCategory = function (category) {
+            $scope.selectedCategory = category;
+            $scope.getFilter();
+        };
+        
+        $scope.isCategory = function (category) {
+            if ($scope.selectedCategory == category) {
+                return "active";
+            }
+
+            return "";
+        };
+
+        $scope.getFilter = function () {
+            $http.post('@Url.Action("CategoryFilter")', { category: $scope.selectedCategory }).success(function (data) {
+                $scope.genres = data;
+            });
+        };
+
+        $scope.getPlaylists = function (genre) {
+            $http.post('@Url.Action("Stations")', genre.station_ids).success(function (data) {
+                $scope.genre = genre;
+                $scope.stations = data;
+            });
+        };
+
+        $scope.getStationNext = function (station) {
+            $http.post('@Url.Action("StationNext")', { stationID: station.id }).success(function (data) {
+                $scope.stationNext = data;
+                audio.play($scope.stationNext.listen_url);
+            });
+        };
+
+        $scope.showStation = function (station) {
+            $http.post('@Url.Action("StationDetails")', { stationID: station.id }).success(function (data) {
+                $scope.stationDetails = data;
+                $scope.showDetails = true;
+            });
+        };
+        
+        $scope.playStation = function (station) {
+            $scope.getStationNext(station);
+        }
+
+        $scope.$on("trackFinished", function () {
+            $scope.getStationNext($scope.stationDetails);
+        });
+
+        $scope.hideDetails = function () {
+            $scope.showDetails = false;
+            audio.pause();
+        };
+
+        $scope.showDetails = false;
+    });
+
+
+</script>
+</html>

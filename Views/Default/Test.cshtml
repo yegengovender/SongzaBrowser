@@ -1,0 +1,350 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" ng-app="SongzaApp" ng-controller="songzaController">
+<head>
+    <meta charset="utf-8" />
+    <meta name="google-site-verification" content="rbDhZy3hGYP0h79Gn02ERCljGrTziMtktp3Tx5oq28g" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.js"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+
+    <style>
+        body {
+            color: #f5f5e5;
+            background-color: #808080;
+        }
+        div.menu {
+            position: relative;
+            transition: top 500ms;
+        }
+
+        div.column {
+            height: 450px;
+            width: 300px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+            div.current {
+                background-color: #414141;
+            }
+
+        a {
+            display: block;
+            font-size: 10px;
+            height: 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: grey;
+            transition: font-size 500ms, color 500ms;
+        }
+
+            a.current {
+                font-size: 12px;
+                color: #f5f5e5;
+            }
+    </style>
+</head>
+
+<body ng-keypress="doKeyEvent($event)" ng-keydown="doKeyEvent($event)">
+    <div class="row" style="text-align: center; background-color: #202020">
+        <div class="col-md-12">
+            <h1>Songza Browser</h1>
+        </div>
+    </div>
+    <div class="row" style="background-color: #303030;">
+        <scroll-list collection="categories"></scroll-list>
+        <scroll-list collection="collections"></scroll-list>
+        <scroll-list collection="stations"></scroll-list>
+
+        <div class="col-md-4 column">
+            <div>
+                <h4 ng-show="stations.selectedItem">{{stations.selectedItem.name}} - {{stations.selectedItem.song_count}} songs</h4>
+            </div>
+
+            <div>
+                <img ng-src="{{stations.selectedItem.cover_url}}" />
+            </div>
+
+            <p>
+                {{stations.selectedItem.description}}
+            </p>
+            <strong ng-show="stations.selectedItem">Featuring</strong>
+            <li ng-repeat="artist in stations.selectedItem.featured_artists">{{artist.name}}</li>
+            <p>
+                <a href="#" class="btn-btn-info" ng-click="playStation(stations.selectedItem)" ng-hide="stations.selectedItem == playingStation && isPlaying">Play [spacebar]</a>
+                <a href="#" class="btn-btn-info" ng-click="pause()" ng-show="stations.selectedItem == playingStation && isPlaying">Currently playing [spacebar to pause]</a>
+            </p>
+        </div>
+
+    </div>
+
+    <div class="row" ng-show="isPlaying">
+        <div class="col-md-4">
+            <h2>Now Playing</h2>
+            <h4>{{stations.selectedItem.name}}</h4>
+            <h5>{{stations.selectedItem.description}}</h5>
+        </div>
+        <div class="col-md-4">
+
+            <div>
+
+                <h4>{{stationNext.song.artist.name}}</h4>
+                <h3>{{stationNext.song.title}}</h3>
+                <p>
+                    <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" />
+                </p>
+            </div>
+
+            <p>
+                <audio id="player" controls>
+                    <source ng-src="{{stationNext.listen_url}}" type="audio/mp4">
+                    <source ng-src="{{stationNext.listen_url}}" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+            <p>
+                <a class="btn btn-primary" ng-click="getStationNext(stationDetails)"><i class="glyphicon glyphicon-forward"></i></a>
+            </p>
+
+        </div>
+    </div>
+</body>
+</html>
+<script>
+
+    var songzaServices = angular.module('songzaServices', []);
+    var songzaDirectives = angular.module('songzaDirectives', []);
+
+    songzaServices.factory('songzaApi', function ($http) {
+        return {
+            categories: function () {
+                return $http.get('@Url.Action("Categories")');
+            },
+            collections: function (category) {
+                return $http.post('@Url.Action("CategoryFilter")', { category: category });
+            },
+            stations: function (station_ids) {
+                return $http.post('@Url.Action("Stations")', station_ids);
+            },
+            nextSong: function (station) {
+                return $http.post('@Url.Action("StationNext")', { stationID: station.id });
+            }
+        };
+    });
+    
+    var SongzaApp = angular.module('SongzaApp', ['songzaServices']);
+
+    SongzaApp.factory('audio', function ($document, $rootScope) {
+        var audioElement = $document[0].getElementById('player'); // <-- Magic trick here
+        var _time;
+        audioElement.addEventListener('ended', function () {
+            $rootScope.$broadcast("trackFinished");
+        });
+
+        return {
+            audioElement: audioElement,
+
+            play: function (filename) {
+                audioElement.src = filename;
+                audioElement.play();
+            },
+
+            resume: function () {
+                audioElement.currentTime = _time;
+                audioElement.play();
+            },
+
+            pause: function () {
+                _time = audioElement.currentTime;
+                audioElement.pause();
+            }
+        };
+    });
+
+    SongzaApp.directive('scrollList', function () {
+        return {
+            restrict: 'E',
+            scope: {
+                itemList: '=collection',
+            },
+            templateUrl: "/Templates/template.html"
+        };
+    });
+
+    SongzaApp.controller('songzaController', function ($scope, $http, audio, songzaApi) {
+
+        var makeList = function (data, clickActionCallback, styleFunction) {
+            var _data = data;
+            var _clickActionCallback = clickActionCallback;
+            var _selectedItem = data[0];
+            var _style = styleFunction(0);
+
+            return {
+                selected: false,
+                items: _data,
+                selectedItem: _selectedItem,
+                clickActionCallback: _clickActionCallback,
+                style: _style,
+                clickAction: function (item) {
+                    this.selectedItem = item;
+                    var itemIndex = this.items.indexOf(item);
+                    this.style = styleFunction(itemIndex);
+                    this.clickActionCallback(item);
+                },
+                increment: function () {
+                    var index = this.items.indexOf(this.selectedItem);
+                    if (index < this.items.length) {
+                        index++;
+                        this.clickAction(this.items[index]);
+                    }
+                },
+                decrement: function () {
+                    var index = this.items.indexOf(this.selectedItem);
+                    if (index > 0) {
+                        index--;
+                        this.clickAction(this.items[index]);
+                    }
+                }
+            };
+        };
+
+        $scope.categories = [];
+        $scope.collections = [];
+        $scope.stations = [];
+        $scope.columns = [$scope.categories, $scope.collections, $scope.stations];
+
+        var setColumn = function(selectColumn) {
+            $scope.columns = [$scope.categories, $scope.collections, $scope.stations];
+            $scope.column = selectColumn;
+            for (var column in $scope.columns) {
+                $scope.columns[column].selected = ($scope.columns[column] == selectColumn);
+            }
+        };
+
+
+        var setStyle = function (index) {
+            return { top: (index * -30) + 100 + 'px' };
+        };
+
+        // Startup + Categories
+        songzaApi.categories().then(function (result) {
+            $scope.categories = makeList(result.data, $scope.categoryClick, setStyle);
+            getCollections($scope.categories.selectedItem);
+            setColumn($scope.categories);
+        });
+
+        $scope.categoryClick = function (category) {
+            setColumn($scope.categories);
+            getCollections($scope.categories.selectedItem);
+        };
+
+
+        // Collections
+        var getCollections = function (category) {
+            songzaApi.collections(category.name).then(function (result) {
+                $scope.collections = makeList(result.data, $scope.collectionClick, setStyle);
+                getStations($scope.collections.selectedItem);
+            });
+        };
+
+        $scope.collectionClick = function (collection) {
+            setColumn($scope.collections)
+            getStations($scope.collections.selectedItem);
+        };
+
+        // Stations
+        var getStations = function (collection) {
+            songzaApi.stations(collection.station_ids).then(function (result) {
+                $scope.stations = makeList(result.data, $scope.stationClick, setStyle);
+            });
+        };
+
+
+        $scope.stationClick = function (station) {
+            setColumn($scope.stations)
+        };
+
+
+
+        // Keyboard UI
+        $scope.doKeyEvent = function (event) {
+            var keycode = event.keyCode;
+            switch (keycode) {
+                case 38: upArrow(); event.preventDefault(); break;
+                case 40: downArrow(); event.preventDefault(); break;
+                case 37: leftArrow(); event.preventDefault(); break;
+                case 39: rightArrow(); event.preventDefault(); break;
+                case 32: spaceBar(); event.preventDefault(); break;
+            }
+            console.debug(keycode);
+        };
+
+        var upArrow = function () {
+            $scope.column.decrement();
+        };
+
+        var downArrow = function () {
+            $scope.column.increment();
+        };
+
+        var leftArrow = function () {
+            var selectedColumn = $scope.columns.indexOf($scope.column);
+            if (selectedColumn > 0 ) {
+                selectedColumn--;
+                setColumn($scope.columns[selectedColumn]);
+            }
+        };
+
+        var rightArrow = function () {
+            var selectedColumn = $scope.columns.indexOf($scope.column);
+            if (selectedColumn < $scope.columns.length - 1) {
+                selectedColumn++;
+                setColumn($scope.columns[selectedColumn]);
+            }
+        };
+
+        var spaceBar = function () {
+            var station = $scope.stations.selectedItem;
+            if ($scope.playingStation == station && $scope.isPlaying) {
+                $scope.pause();
+                return;
+            }
+
+            if ($scope.playingStation == station && !$scope.isPlaying) {
+                audio.resume();
+                $scope.isPlaying = true;
+                return;
+            }
+
+            $scope.playStation(station);
+        };
+
+        $scope.playStation = function (station) {
+            if ($scope.playingStation == station) {
+                audio.resume();
+            }
+            else {
+                songzaApi.nextSong(station).then(function (result) {
+                    $scope.stationNext = result.data;
+                    audio.play($scope.stationNext.listen_url);
+                });
+
+                $scope.playingStation = station;
+            }
+            $scope.isPlaying = true;
+        };
+
+        $scope.pause = function () {
+            audio.pause();
+            $scope.isPlaying = false;
+        };
+        
+
+        $scope.isPlaying = false;
+        var stationStarted = false;
+
+    });
+
+
+</script>
