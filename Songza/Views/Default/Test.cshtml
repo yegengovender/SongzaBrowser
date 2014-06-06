@@ -55,22 +55,19 @@
         </div>
     </div>
     
-        <div class="row" ng-show="isPlaying">
-        <div class="col-md-4">
-            <h2>Now Playing</h2>
-            <h4>{{stations.selectedItem.name}}</h4>
-            <h5>{{stations.selectedItem.description}}</h5>
+    <div class="row" ng-show="isPlaying">
+        <div class="col-md-2">
+            <p>
+                <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" />
+            </p>
         </div>
-        <div class="col-md-4">
-
+        <div class="col-md-2">
             <div>
-
                 <h4>{{stationNext.song.artist.name}}</h4>
                 <h3>{{stationNext.song.title}}</h3>
-                <p>
-                    <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" />
-                </p>
             </div>
+        </div>
+        <div class="col-md-4">
 
             <p>
                 <audio id="player" controls>
@@ -83,6 +80,12 @@
             </p>
 
         </div>
+        <div class="col-md-4">
+            <h2>Now Playing</h2>
+            <h4>{{stations.selectedItem.name}}</h4>
+            <h5>{{stations.selectedItem.description}}</h5>
+        </div>
+        
     </div>
     <div id="main"
         style="background-color: #303030;background-repeat: no-repeat;background-size: cover; background-position: center" 
