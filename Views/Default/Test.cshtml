@@ -336,9 +336,17 @@
                 audio.play($sce.trustAsResourceUrl($scope.stationNext.listen_url));
                 var artist = result.data.song.artist;
                 var name = artist.name;
+                
                 echoNestApi.artistInfo(name).then(function (result) {
                     var artist = result.data.response.artists;
-                    console.debug(artist);
+                    
+                    if(artist){
+                        var id = artist[0].id;
+                        
+                        echoNestApi.artistImages(id).then(function (result) {
+                            console.debug(result);
+                        });
+                    }
                 });
             });            
         };
