@@ -337,7 +337,7 @@
                 var artist = result.data.song.artist;
                 var name = artist.name;
                 echoNestApi.artistInfo(name).then(function (result) {
-                    $scope.artist = result;
+                    $scope.artist = result.data.response.artists;
                     console.debug(result);
                 });
             });            
