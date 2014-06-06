@@ -337,6 +337,10 @@
             }
             $scope.isPlaying = true;
         };
+        
+        $scope.$on("trackFinished", function () {
+            $scope.getStationNext($scope.playingStation);
+        });
 
         $scope.pause = function () {
             audio.pause();
