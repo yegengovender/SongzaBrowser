@@ -334,7 +334,7 @@
             songzaApi.nextSong(station).then(function (result) {
                 $scope.stationNext = result.data;
                 audio.play($sce.trustAsResourceUrl($scope.stationNext.listen_url));
-                var artist = data.song.artist;
+                var artist = result.data.song.artist;
                 console.debug('artist: ' + artist);
             });            
         };

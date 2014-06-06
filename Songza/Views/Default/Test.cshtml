@@ -182,7 +182,7 @@
         };
     });
 
-    SongzaApp.controller('songzaController', function ($scope, $http, $sce, audio, songzaApi) {
+    SongzaApp.controller('songzaController', function ($scope, $http, $sce, audio, songzaApi, echoNestApi) {
 
         var makeList = function (data, clickActionCallback, styleFunction) {
             var _data = data;
@@ -335,7 +335,11 @@
                 $scope.stationNext = result.data;
                 audio.play($sce.trustAsResourceUrl($scope.stationNext.listen_url));
                 var artist = result.data.song.artist;
-                console.debug('artist: ' + artist);
+                var name = artist.name;
+                echoNestApi.artistInfo(name).then(function (result) {
+                    $scope.artist = result;
+                    console.debug(result);
+                });
             });            
         };
 
