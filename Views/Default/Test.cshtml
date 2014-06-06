@@ -53,7 +53,7 @@
             <h1>Songza Browser</h1>
         </div>
     </div>
-    <div class="row" style="background-color: #303030;">
+    <div class="row" style="background-color: #303030;" ng-style="{'background-image': 'url(' + artistImages[0] + ')'}">
         <scroll-list collection="categories"></scroll-list>
         <scroll-list collection="collections"></scroll-list>
         <scroll-list collection="stations"></scroll-list>
@@ -344,7 +344,8 @@
                         var id = artist[0].id;
                         
                         echoNestApi.artistImages(id).then(function (result) {
-                            console.debug(result);
+                            var images = result.data.response.images;
+                            $scope.artistImages = images;
                         });
                     }
                 });
