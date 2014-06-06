@@ -132,6 +132,16 @@
             }
         };
     });
+    songzaServices.factory('echoNestApi', function ($http) {
+        return {
+            artistInfo: function (name) {
+                return $http.get('http://developer.echonest.com/api/v4/artist/search?api_key=KUDAPUSC2PCCLMIO7&format=json&name=' + name + '&results=1');
+            },
+            artistImages: function (id) {
+                return $http.get('http://developer.echonest.com/api/v4/artist/images?api_key=KUDAPUSC2PCCLMIO7&format=json&id=' + id);
+            },
+        };
+    });
     
     var SongzaApp = angular.module('SongzaApp', ['songzaServices']);
 
@@ -324,6 +334,8 @@
             songzaApi.nextSong(station).then(function (result) {
                 $scope.stationNext = result.data;
                 audio.play($sce.trustAsResourceUrl($scope.stationNext.listen_url));
+                var artist = data.song.artist;
+                console.debug('artist: ' + artist);
             });            
         };
 
