@@ -319,17 +319,20 @@
 
             $scope.playStation(station);
         };
+        
+        $scope.getStationNext = function (station) {
+            songzaApi.nextSong(station).then(function (result) {
+                $scope.stationNext = result.data;
+                audio.play($sce.trustAsResourceUrl($scope.stationNext.listen_url));
+            });            
+        };
 
         $scope.playStation = function (station) {
             if ($scope.playingStation == station) {
                 audio.resume();
             }
             else {
-                songzaApi.nextSong(station).then(function (result) {
-                    $scope.stationNext = result.data;
-                    audio.play($sce.trustAsResourceUrl($scope.stationNext.listen_url));
-                });
-
+                $scope.getStationNext();
                 $scope.playingStation = station;
             }
             $scope.isPlaying = true;

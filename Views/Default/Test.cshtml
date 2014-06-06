@@ -327,7 +327,7 @@
             else {
                 songzaApi.nextSong(station).then(function (result) {
                     $scope.stationNext = result.data;
-                    audio.play($sce.trustAsUrl($scope.stationNext.listen_url));
+                    audio.play($sce.trustAsResourceUrl($scope.stationNext.listen_url));
                 });
 
                 $scope.playingStation = station;
