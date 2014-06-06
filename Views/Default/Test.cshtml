@@ -23,10 +23,11 @@
             width: 300px;
             overflow: hidden;
             text-align: center;
+            background-color: rgba(41,41,41,0.5);
         }
 
             div.current {
-                background-color: #414141;
+                background-color: rgba(41,41,41,0.75);
             }
 
         a {
@@ -53,7 +54,9 @@
             <h1>Songza Browser</h1>
         </div>
     </div>
-    <div class="row" style="background-color: #303030;" ng-style="{'background-image': 'url(' + artistImages[0].url + ')'}">
+    <div class="row"
+        style="background-color: #303030;background-repeat: no-repeat;background-size: cover;" 
+        ng-style="{'background-image': 'url(' + artistImages[0].url + ')'}">
         <scroll-list collection="categories"></scroll-list>
         <scroll-list collection="collections"></scroll-list>
         <scroll-list collection="stations"></scroll-list>

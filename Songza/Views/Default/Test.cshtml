@@ -23,11 +23,11 @@
             width: 300px;
             overflow: hidden;
             text-align: center;
-            background-color: rgba(41,41,41,0.5);
+            background-color: rgba(41,41,41,0.75);
         }
 
             div.current {
-                background-color: rgba(41,41,41,0.75);
+                background-color: rgba(41,41,41,0.85);
             }
 
         a {
@@ -54,33 +54,39 @@
             <h1>Songza Browser</h1>
         </div>
     </div>
-    <div class="row"
-        style="background-color: #303030;background-repeat: no-repeat;background-size: cover;" 
+    <div id="main"
+        style="background-color: #303030;background-repeat: no-repeat;background-size: cover; background-position: center" 
         ng-style="{'background-image': 'url(' + artistImages[0].url + ')'}">
-        <scroll-list collection="categories"></scroll-list>
-        <scroll-list collection="collections"></scroll-list>
-        <scroll-list collection="stations"></scroll-list>
-
-        <div class="col-md-4 column">
-            <div>
-                <h4 ng-show="stations.selectedItem">{{stations.selectedItem.name}} - {{stations.selectedItem.song_count}} songs</h4>
-            </div>
-
-            <div>
-                <img ng-src="{{stations.selectedItem.cover_url}}" />
-            </div>
-
-            <p>
-                {{stations.selectedItem.description}}
-            </p>
-            <strong ng-show="stations.selectedItem">Featuring</strong>
-            <li ng-repeat="artist in stations.selectedItem.featured_artists">{{artist.name}}</li>
-            <p>
-                <a href="#" class="btn-btn-info" ng-click="playStation(stations.selectedItem)" ng-hide="stations.selectedItem == playingStation && isPlaying">Play [spacebar]</a>
-                <a href="#" class="btn-btn-info" ng-click="pause()" ng-show="stations.selectedItem == playingStation && isPlaying">Currently playing [spacebar to pause]</a>
-            </p>
+        
+        <div class="row">
+            <scroll-list collection="categories"></scroll-list>
+            <scroll-list collection="collections"></scroll-list>
+            <scroll-list collection="stations"></scroll-list>
         </div>
-
+        
+        <div class="row">
+    
+            <div class="col-md-4 column">
+                <div>
+                    <h4 ng-show="stations.selectedItem">{{stations.selectedItem.name}} - {{stations.selectedItem.song_count}} songs</h4>
+                </div>
+    
+                <div>
+                    <img ng-src="{{stations.selectedItem.cover_url}}" />
+                </div>
+    
+                <p>
+                    {{stations.selectedItem.description}}
+                </p>
+                <strong ng-show="stations.selectedItem">Featuring</strong>
+                <li ng-repeat="artist in stations.selectedItem.featured_artists">{{artist.name}}</li>
+                <p>
+                    <a href="#" class="btn-btn-info" ng-click="playStation(stations.selectedItem)" ng-hide="stations.selectedItem == playingStation && isPlaying">Play [spacebar]</a>
+                    <a href="#" class="btn-btn-info" ng-click="pause()" ng-show="stations.selectedItem == playingStation && isPlaying">Currently playing [spacebar to pause]</a>
+                </p>
+            </div>
+    
+        </div>
     </div>
 
     <div class="row" ng-show="isPlaying">
