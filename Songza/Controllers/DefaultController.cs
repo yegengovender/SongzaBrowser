@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Web.Mvc;
 using Songza.Infrastructure;
+using Songza.Models;
 
 namespace Songza.Controllers
 {
@@ -19,7 +20,14 @@ namespace Songza.Controllers
         private const string CategoryUrl = "http://songza.com/api/1/gallery/tag/{0}";
         
         private readonly WebApiHelper _webApiHelper;
-        private readonly string[] CategoryList = { "genres", "activities", "moods", "decades", "culture", "record_store_clerk" };
+        private readonly NameList[] CategoryList = new NameList[] { 
+                                                     new NameList("genres"             ),
+                                                     new NameList("activities"         ),
+                                                     new NameList("moods"              ),
+                                                     new NameList("decades"            ),
+                                                     new NameList("culture"            ),
+                                                     new NameList("record_store_clerk" )
+                                                 };
 
         public DefaultController(WebApiHelper webApiHelper)
         {
@@ -28,6 +36,11 @@ namespace Songza.Controllers
         }
 
         public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult Test()
         {
             return View();
         }
