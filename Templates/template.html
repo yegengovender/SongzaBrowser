@@ -1,4 +1,4 @@
-﻿<div class="col-md-2 column" ng-class="{current: itemList.selected}">
+﻿<div class="col-md-4 column" ng-class="{current: itemList.selected}">
     <div class="menu" ng-style="itemList.style">
         <a href=" #" ng-repeat="item in itemList.items" ng-class="{current: item==itemList.selectedItem}" ng-click="itemList.clickAction(item)">
             {{item.name}}

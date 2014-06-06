@@ -54,6 +54,36 @@
             <h1>Songza Browser</h1>
         </div>
     </div>
+    
+        <div class="row" ng-show="isPlaying">
+        <div class="col-md-4">
+            <h2>Now Playing</h2>
+            <h4>{{stations.selectedItem.name}}</h4>
+            <h5>{{stations.selectedItem.description}}</h5>
+        </div>
+        <div class="col-md-4">
+
+            <div>
+
+                <h4>{{stationNext.song.artist.name}}</h4>
+                <h3>{{stationNext.song.title}}</h3>
+                <p>
+                    <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" />
+                </p>
+            </div>
+
+            <p>
+                <audio id="player" controls>
+                    <source ng-src="{{stationNext.listen_url}}" type="audio/mp4">
+                    <source ng-src="{{stationNext.listen_url}}" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+            <p>
+                <a class="btn btn-primary" ng-click="getStationNext(playingStation)"><i class="glyphicon glyphicon-forward"></i></a>
+            </p>
+
+        </div>
+    </div>
     <div id="main"
         style="background-color: #303030;background-repeat: no-repeat;background-size: cover; background-position: center" 
         ng-style="{'background-image': 'url(' + artistImages[0].url + ')'}">
@@ -89,35 +119,7 @@
         </div>
     </div>
 
-    <div class="row" ng-show="isPlaying">
-        <div class="col-md-4">
-            <h2>Now Playing</h2>
-            <h4>{{stations.selectedItem.name}}</h4>
-            <h5>{{stations.selectedItem.description}}</h5>
-        </div>
-        <div class="col-md-4">
 
-            <div>
-
-                <h4>{{stationNext.song.artist.name}}</h4>
-                <h3>{{stationNext.song.title}}</h3>
-                <p>
-                    <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" />
-                </p>
-            </div>
-
-            <p>
-                <audio id="player" controls>
-                    <source ng-src="{{stationNext.listen_url}}" type="audio/mp4">
-                    <source ng-src="{{stationNext.listen_url}}" type="audio/mp3">
-                    Your browser does not support the audio element.
-                </audio>
-            <p>
-                <a class="btn btn-primary" ng-click="getStationNext(playingStation)"><i class="glyphicon glyphicon-forward"></i></a>
-            </p>
-
-        </div>
-    </div>
 </body>
 </html>
 <script>
