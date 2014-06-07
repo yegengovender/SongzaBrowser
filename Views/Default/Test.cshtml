@@ -56,14 +56,12 @@
     
     <div class="row" ng-show="isPlaying">
         <div class="col-md-2">
-            <p>
-                <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" />
-            </p>
+                <img ng-src="{{stationNext.song.cover_url}}" id="nowplayingArt" height="100px" />
         </div>
         <div class="col-md-2">
             <div>
-                <h4>{{stationNext.song.artist.name}}</h4>
-                <h3>{{stationNext.song.title}}</h3>
+                <h5>{{stationNext.song.artist.name}}</h5>
+                <h4>{{stationNext.song.title}}</h4>
             </div>
         </div>
         <div class="col-md-4">
@@ -80,9 +78,9 @@
 
         </div>
         <div class="col-md-4">
-            <h2>Now Playing</h2>
-            <h4>{{stations.selectedItem.name}}</h4>
-            <h5>{{stations.selectedItem.description}}</h5>
+            <h4>Now Playing</h4>
+            <h5>{{stations.selectedItem.name}}</h5>
+            <!--<p>{{stations.selectedItem.description}}</p>-->
         </div>
         
     </div>
