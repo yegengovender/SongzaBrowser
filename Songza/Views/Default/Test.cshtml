@@ -50,7 +50,7 @@
                 background-repeat: no-repeat;
                 background-size: 100%; 
                 background-position-x: 50%;
-                background-position-y: 0;
+                background-position-y: bottom;
                 transition: background-position 15s;
             }
     </style>
@@ -370,7 +370,7 @@
                             var images = result.data.response.images;
                             $scope.artistImages = images;
                             
-                            $scope.mainStyle = {'background-image': 'url("' + $scope.artistImages[0].url + '")', 'background-position-y': 'bottom'};
+                            $scope.mainStyle = {'background-image': 'url("' + $scope.artistImages[0].url + '")', 'background-position-y': 'top'};
                             console.debug($scope.mainStyle);
                         });
                     }
