@@ -44,6 +44,14 @@
                 font-size: 12px;
                 color: #f5f5e5;
             }
+            
+            #main{
+                background-color: #303030;
+                background-repeat: no-repeat;
+                background-size: 100%; 
+                background-position-x: 50%;
+                background-position-y: 50%;
+            }
     </style>
 </head>
 
@@ -85,7 +93,7 @@
         
     </div>
     <div id="main"
-        style="background-color: #303030;background-repeat: no-repeat;background-size: cover; background-position: center" 
+        style="" 
         ng-style="{'background-image': 'url(' + artistImages[0].url + ')'}">
         
         <div class="row">
@@ -104,10 +112,15 @@
                 <div>
                     <img ng-src="{{stations.selectedItem.cover_url}}" />
                 </div>
+            </div>
     
+            <div class="col-md-4 column">
                 <p>
                     {{stations.selectedItem.description}}
                 </p>
+            </div>
+
+            <div class="col-md-4 column">
                 <strong ng-show="stations.selectedItem">Featuring</strong>
                 <li ng-repeat="artist in stations.selectedItem.featured_artists">{{artist.name}}</li>
                 <p>
