@@ -368,10 +368,10 @@
                         
                         echoNestApi.artistImages(id).then(function (result) {
                             var images = result.data.response.images;
-                            $scope.artistImages = images;
-                            
-                            $scope.mainStyle = {'background-image': 'url("' + $scope.artistImages[0].url + '")', 'background-position-y': 'top'};
-                            console.debug($scope.mainStyle);
+                            for(i=0;i<images.length;i++) {
+                                var pos = i % 2==0 ? 'top': 'bottom';
+                                $scope.mainStyle = {'background-image': 'url("' + images[0].url + '")', 'background-position-y': pos};                                
+                            }
                         });
                     }
                 });
