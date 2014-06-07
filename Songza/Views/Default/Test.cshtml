@@ -372,7 +372,7 @@
                             var images = result.data.response.images;
                             $scope.artistImages = images;
                             
-                            $scope.mainStyle = " {'background-image': 'url(" + artistImages[0].url + ")'; background-position-y: 0}"l
+                            $scope.mainStyle = " {'background-image': 'url(" + $scope.artistImages[0].url + ")'; background-position-y: 0}";
                         });
                     }
                 });

@@ -95,7 +95,7 @@
     </div>
     <div id="main"
         style="" 
-        ng-style="{'background-image': 'url(' + artistImages[0].url + ')'}">
+        ng-style="mainStyle">
         
         <div class="row">
             <scroll-list collection="categories"></scroll-list>
@@ -371,6 +371,8 @@
                         echoNestApi.artistImages(id).then(function (result) {
                             var images = result.data.response.images;
                             $scope.artistImages = images;
+                            
+                            $scope.mainStyle = " {'background-image': 'url(" + artistImages[0].url + ")'; background-position-y: 0}"l
                         });
                     }
                 });
