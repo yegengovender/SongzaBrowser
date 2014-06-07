@@ -93,9 +93,7 @@
         </div>
         
     </div>
-    <div id="main"
-        style="" 
-        ng-style="mainStyle">
+    <div id="main" ng-style="mainStyle">
         
         <div class="row">
             <scroll-list collection="categories"></scroll-list>
@@ -372,7 +370,8 @@
                             var images = result.data.response.images;
                             $scope.artistImages = images;
                             
-                            $scope.mainStyle = " {'background-image': 'url(" + $scope.artistImages[0].url + ")'; background-position-y: 0}";
+                            $scope.mainStyle = "{'background-image': 'url(" + $scope.artistImages[0].url + ")'; background-position-y: 0}";
+                            console.debug($scope.mainStyle);
                         });
                     }
                 });
