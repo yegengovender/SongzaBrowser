@@ -112,10 +112,15 @@
                 <div>
                     <img ng-src="{{stations.selectedItem.cover_url}}" />
                 </div>
+            </div>
     
+            <div class="col-md-4 column">
                 <p>
                     {{stations.selectedItem.description}}
                 </p>
+            </div>
+
+            <div class="col-md-4 column">
                 <strong ng-show="stations.selectedItem">Featuring</strong>
                 <li ng-repeat="artist in stations.selectedItem.featured_artists">{{artist.name}}</li>
                 <p>
